@@ -36,8 +36,6 @@ class Show(Resource):
         parser = reqparse.RequestParser()
 
         parser.add_argument('img', required=True)
-        parser.add_argument('save_to', required=True)
-
         args = parser.parse_args()
 
         img = base64.b64decode(args.img)
@@ -47,26 +45,11 @@ class Show(Resource):
         
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray)
-
-
-        cv2.imwrite(args.save_to, img)
-        
-        # Serialization
-        
-        tempData = np.array(faces)
-        
-        results = {"array": tempData}
-        
         
         return Response(
-        
-        response = json.dumps(results, cls=NumpyArrayEncoder),
-        
-   #         response=json.dumps({ 
-   #             "data": results,
-   #         }),
-   
-   
+            response=json.dumps({ 
+                "data": faces.tolist(),
+            }),
             status=200,
             mimetype='application/json'
         )

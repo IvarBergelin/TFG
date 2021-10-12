@@ -19,8 +19,7 @@ def encode_img(img, encoding):
 
 
 def post_img(url, port, img: np.array, 
-            encoding: str = 'png',
-            save_to: str = '/tmp/image.png'):
+            encoding: str = 'png'):
 
     buf = encode_img(img, '.' + encoding)
     img64 = base64.b64encode(buf)
@@ -29,7 +28,6 @@ def post_img(url, port, img: np.array,
     try:
         r = requests.post(req_url, data={
             'img': img64,
-            'save_to': save_to,
         })
     except ConnectionResetError:
         return False, None
@@ -47,46 +45,18 @@ def main():
     config = args.parse_args()
 
     img = cv2.imread(config.image)
-    status_code, bounding_boxes = post_img(url=config.url, port=config.port, img=img, save_to=config.save_to)
-    
-    
-    
+    status_code, bounding_boxes = post_img(url=config.url, port=config.port, img=img)
+
     if status_code == 200:
         print('Request successful.')
-        # Deserialization
-        print("Decode JSON serialized NumPy array")
-        decodedArrays = json.loads(bounding_boxes)
-        print(f'Bounding boxes: {decodedArrays}')
         
-        print('type decodedArrays:')
-        print (type(decodedArrays))
-       
-        print('\n')
-        """
-        arrayList = list(decodedArrays.items())
-        
-        print('type arrayList:')
-        print (type(arrayList))
-        print('arrayList:')
-        print (arrayList)
-        print('\n')
-        
-       
-        arrayTemp = np.array(arrayList)
-        arrayTemp = np.asarray(decodedArrays)
-        
-        
-        print('type arrayTemp:')
-        print (type(arrayTemp))
-        print('\n')
-        """
-        
-        for (x,y,w,h) in decodedArrays:
+        for (x,y,w,h) in bounding_boxes:
             print (x,y)
             
-            cv2.rectangle((img,(x,y),(x+w,y+h)),(255,0,0),2)
-            #roi_gray = gray[y:y+h, x:x+w]
-            #roi_color = img[y:y+h, x:x+w]
+            cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+
+        cv2.imshow("Results", img)
+        cv2.waitKey(0)
     else:
         print(f'Request returned error {status_code}')
 
