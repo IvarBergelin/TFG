@@ -14,6 +14,8 @@ import cv2
 import numpy as np
 import pandas as pd
 
+#Test amb el . a github
+
 haar_file = (cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 face_cascade = cv2.CascadeClassifier(haar_file)
 
