@@ -40,7 +40,7 @@ def main():
     args.add_argument("image", type=str, help="Path to the image to send to the server.")
     args.add_argument("--url", type=str, default='http://127.0.0.1', help="Server's url.")
     args.add_argument("--port", type=int, default=6000, help="Port to listen to incoming requests.")
-    args.add_argument("-s", "--save-to", type=str, default='/tmp/image.png', help="Path to save image on server's side.")
+    
 
     config = args.parse_args()
 
@@ -51,7 +51,7 @@ def main():
         print('Request successful.')
         
         for (x,y,w,h) in bounding_boxes:
-            print (x,y)
+            print (x,y,w,h)
             
             cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
 
