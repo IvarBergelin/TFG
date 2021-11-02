@@ -38,7 +38,7 @@ def post_img(url, port, img: np.array,
 def main():
     args = argparse.ArgumentParser()
     args.add_argument("image", type=str, help="Path to the image to send to the server.")
-    args.add_argument("--url", type=str, default='http://127.0.0.1', help="Server's url.")
+    args.add_argument("--url", type=str, default='http://172.17.0.2', help="Server's url.")
     args.add_argument("--port", type=int, default=6000, help="Port to listen to incoming requests.")
     
 
@@ -53,10 +53,10 @@ def main():
         for (x,y,w,h) in bounding_boxes:
             print (x,y,w,h)
             
-            cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+            #cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
 
-        cv2.imshow("Results", img)
-        cv2.waitKey(0)
+        #cv2.imshow("Results", img)
+        #cv2.waitKey(0)
     else:
         print(f'Request returned error {status_code}')
 
