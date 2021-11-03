@@ -5,9 +5,6 @@ import argparse
 import base64
 import json
 from json import JSONEncoder
-
-
-
 from flask import Flask, Response
 from flask_restful import Resource, Api, reqparse
 import cv2
@@ -62,7 +59,7 @@ def start_server(
     api = Api(app)
 
     api.add_resource(Show, '/show')
-    app.run(port=port)
+    app.run(port=port, host='0.0.0.0')
     
 
 def main():

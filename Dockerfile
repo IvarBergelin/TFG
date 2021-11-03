@@ -1,16 +1,11 @@
 #Dockerfile, Image, Container
 FROM python:3.9.5
 
+# RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#     apt-get install -y -q --no-install-recommends python3-opencv && \
+#     rm -rf /var/lib/apt/lists/*
+
+RUN pip install numpy opencv-python-headless pandas flask flask_restful response
 ADD server_example.py .
 
-
-RUN pip install --upgrade pip
-RUN pip install numpy
-RUN apt-get update && apt-get install -y python3-opencv
-RUN pip install opencv-python
-RUN pip install pandas
-RUN pip install flask
-RUN pip install flask_restful
-RUN pip install response
-
-CMD ["python", "./server_example.py"]
+ENTRYPOINT ["python", "./server_example.py"]

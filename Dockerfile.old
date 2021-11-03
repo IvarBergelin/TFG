@@ -1,0 +1,17 @@
+#Dockerfile, Image, Container
+FROM python:3.9.5
+
+ADD server_example.py .
+
+EXPOSE 6000/tcp
+
+RUN pip install --upgrade pip
+RUN pip install numpy
+RUN apt-get update && apt-get install -y python3-opencv
+RUN pip install opencv-python
+RUN pip install pandas
+RUN pip install flask
+RUN pip install flask_restful
+RUN pip install response
+
+CMD ["python", "./server_example.py"]
