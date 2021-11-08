@@ -1,5 +1,5 @@
 #Dockerfile, Image, Container
-FROM python:3.9.5
+FROM python:3.8.2
 
 # RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 #     apt-get install -y -q --no-install-recommends python3-opencv && \
