@@ -5,7 +5,8 @@ FROM python:3.8.2
 #     apt-get install -y -q --no-install-recommends python3-opencv && \
 #     rm -rf /var/lib/apt/lists/*
 
-RUN pip install numpy opencv-python-headless pandas flask flask_restful response
-ADD server_example.py .
+RUN pip install numpy opencv-python-headless requests
+RUN echo 'Ja pots iniciar el client'
+#CMD ["python", "./client_example.py", "rebe.jpeg"]
 
-ENTRYPOINT ["python", "./server_example.py"]
+ADD client_example.py .

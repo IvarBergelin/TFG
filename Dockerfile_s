@@ -1,0 +1,30 @@
+#Dockerfile, Image, Container
+
+FROM ubuntu:focal
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update 
+RUN apt-get install -y python3.8\
+    python3-pip\
+    firefox
+
+RUN pip install numpy\ 
+    opencv-python-headless\
+    pandas\
+    flask\
+    flask_restful\ 
+    response
+
+RUN groupadd -g 1000 server
+RUN useradd -d /home/server -s /bin/bash -m server -u 1000 -g 1000
+USER server
+ENV HOME /home/server
+ADD server_example.py .
+#ENTRYPOINT ["python3", "./server_example.py"]
+CMD /usr/bin/firefox
+
+
+# RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#     apt-get install -y -q --no-install-recommends python3-opencv && \
+#     rm -rf /var/lib/apt/lists/*
+
+
