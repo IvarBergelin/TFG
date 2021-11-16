@@ -1,27 +1,41 @@
 #Dockerfile, Image, Container
 
-FROM ubuntu:focal
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update 
-RUN apt-get install -y python3.8\
-    python3-pip\
-    firefox
+#FROM ubuntu:focal
 
-RUN pip install numpy\ 
-    opencv-python-headless\
-    pandas\
-    flask\
-    flask_restful\ 
-    response
+FROM python:3.7-slim as build
 
-RUN groupadd -g 1000 server
-RUN useradd -d /home/server -s /bin/bash -m server -u 1000 -g 1000
-USER server
-ENV HOME /home/server
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y -q --no-install-recommends protobuf-compiler && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip grpcio-tools protobuf numpy opencv-python-headless pandas pillow imutils flask flask_restful response
+
+FROM python:3.7-slim
+
+COPY --from=build /usr/local/lib/python3.7/site-packages /usr/local/lib/python3.7/site-packages
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y -q --no-install-recommends libgl1-mesa-dev libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install openvino
+
+#ENV DEBIAN_FRONTEND=noninteractive
+#RUN apt-get update
+
+#RUN apt-get install -y python3.8\
+#    python3-pip
+#RUN rm -rf /var/lib/apt/lists/*
+#pip install numpy\
+#    opencv-python-headless\
+#    pandas\
+#    flask\
+#    flask_restful\
+#    response\
+#    openvino-python
+
 ADD server_example.py .
-#ENTRYPOINT ["python3", "./server_example.py"]
-CMD /usr/bin/firefox
 
+ENTRYPOINT ["python3", "./server_example.py"]
 
 # RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 #     apt-get install -y -q --no-install-recommends python3-opencv && \
