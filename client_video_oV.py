@@ -40,7 +40,7 @@ def post_img(url, port, frame: np.array,
 def main():
 
     cap = cv2.VideoCapture(0)
-
+    print ("CAP: ",cap) 
     while True:
         #capture video frame by frame
         ret, frame = cap.read()

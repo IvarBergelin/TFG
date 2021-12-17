@@ -5,14 +5,22 @@ import argparse
 import base64
 import json
 from json import JSONEncoder
+
+from edge_autotune.dnn.infer import ModelIE
+
+from numpy.lib.type_check import imag
 from flask import Flask, Response
 from flask_restful import Resource, Api, reqparse
 import cv2
 import numpy as np
 import pandas as pd
+import pdb
 
-haar_file = (cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-face_cascade = cv2.CascadeClassifier(haar_file)
+#haar_file = (cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+#face_cascade = cv2.CascadeClassifier(haar_file)
+
+#net = cv2.dnn.readNet('/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.bin','/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
+#net.setPrefereableTarfet(cv2.dnn.DNN_TARGET_CPU)
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
@@ -22,6 +30,11 @@ class NumpyArrayEncoder(JSONEncoder):
 
 
 class Show(Resource):
+
+    def __init__(self) -> None:
+        self.model = ModelIE('/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
+
+
     def get(self):
         data = pd.DataFrame([], columns=['test'])
         data = data.to_dict()
@@ -39,13 +52,31 @@ class Show(Resource):
         nparr = np.frombuffer(img, np.uint8)
         img = cv2.imdecode(nparr, flags=1)
         
+        #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        #faces = face_cascade.detectMultiScale(gray)
         
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray)
-        
+        #blob = cv2.dnn.blobFromImage(img, size=(672,384),ddepth=cv2.CV_8U)
+        #net.setInput(blob)
+        #faces = net.forward()
+
+        results = self.model.run([img])[0]
+        faces = []
+
+        for i, box in enumerate(results['boxes']):
+            score = results['scores'][i]
+            class_id = results['class_ids'][i]
+            
+            if score < 0.3:
+                continue
+            
+            faces.append(box)
+
+        #results = results[0]
+        #pdb.set_trace()
+
         return Response(
             response=json.dumps({ 
-                "data": faces.tolist(),
+                "data": faces,
             }),
             status=200,
             mimetype='application/json'
