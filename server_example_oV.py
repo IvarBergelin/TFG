@@ -32,7 +32,7 @@ class NumpyArrayEncoder(JSONEncoder):
 class Show(Resource):
 
     def __init__(self) -> None:
-        self.model = ModelIE('/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
+        self.model = ModelIE('models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
 
 
     def get(self):

@@ -49,15 +49,22 @@ def main():
             break
 
         #status_code, bounding_boxes = post_img(url=config.url, port=config.port, img=frame)
-        status_code, bounding_boxes = post_img(url='http://192.168.1.37', port=6000, frame=frame)
+        status_code, bounding_boxes = post_img(url='http://127.0.0.1', port=6000, frame=frame)
+
+        height, width, _ = frame.shape
 
         if status_code == 200:
             print('Request successful.')
         
-            for (x,y,w,h) in bounding_boxes:
-                print (x,y,w,h)
+            for (x1,y1,x2,y2,) in bounding_boxes:
+                print(f'pre: {[x1,y2,x2,y2]}')
+                x1 = int(x1*width)
+                y1 = int(y1*width)
+                x2 = int(x2*width)
+                y2 = int(y2*width)
+                print(f'post: {[x1,y2,x2,y2]}')
             
-                cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0) ,2)
+                cv2.rectangle(frame, (x1,y1), (x2,y2), (255,0,0) ,2)
         
             #breakpoint()
 
