@@ -38,47 +38,50 @@ def post_img(url, port, frame: np.array,
 
 
 def main():
+    args = argparse.ArgumentParser()
+    args.add_argument("--stream", type=str, default=None, help="Stream to decode.")
+    args.add_argument("--port", type=int, default=6000, help="Port to listen to incoming requests.")
+    args.add_argument("--ip", type=str, default='127.0.0.1', help="Server's IP.")
+    args.add_argument("--delay", type=float, default=0, help="Delay between frames (in seconds).")
+    
+    server_ip = f'http://{args.ip}'
 
-    cap = cv2.VideoCapture(0)
-    print ("CAP: ",cap) 
+    if args.stream is None:
+        cap = cv2.VideoCapture(0)
+    else:
+        cap = cv2.VideoCapture(args.stream)
+        
     while True:
         #capture video frame by frame
         ret, frame = cap.read()
-        if ret == False:
-            print('NO FACE DETECTED')
+        if not ret:
             break
 
-        #status_code, bounding_boxes = post_img(url=config.url, port=config.port, img=frame)
-        status_code, bounding_boxes = post_img(url='http://127.0.0.1', port=6000, frame=frame)
+        status_code, bounding_boxes = post_img(url=server_ip, port=args.port, frame=frame)
 
         height, width, _ = frame.shape
-
         if status_code == 200:
-            print('Request successful.')
         
             for (x1,y1,x2,y2,) in bounding_boxes:
-                print(f'pre: {[x1,y2,x2,y2]}')
                 x1 = int(x1*width)
                 y1 = int(y1*width)
                 x2 = int(x2*width)
                 y2 = int(y2*width)
-                print(f'post: {[x1,y2,x2,y2]}')
             
                 cv2.rectangle(frame, (x1,y1), (x2,y2), (255,0,0) ,2)
-        
-            #breakpoint()
 
             cv2.imshow('Results', frame)
-            #time.sleep(0.1)
+            
+            if args.delay:
+                time.sleep(args.delay)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-        
-                #after the loop release the cap object
-                cap.release()
-       
         else:
             print(f'Request returned error {status_code}')
+
+    #after the loop release the cap object
+    cap.release()
 
 
 if __name__ == "__main__":

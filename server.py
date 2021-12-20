@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 import pdb
 
+FACE_DETECT_MODEL = 'models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml'
+
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -25,11 +27,8 @@ class NumpyArrayEncoder(JSONEncoder):
 
 class Show(Resource):
 
-    def __init__(self) -> None:
-        self.model = ModelIE('models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
-        #self.model = ModelIE('models/intel/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml')
-        
-
+    def __init__(self, model_path) -> None:
+        self.model = ModelIE(model_path)
 
     def get(self):
         data = pd.DataFrame([], columns=['test'])
@@ -74,20 +73,22 @@ class Show(Resource):
 
 def start_server(
     port: int = 6000,
+    model: str = None,
 ):
     app = Flask(__name__)
     api = Api(app)
 
-    api.add_resource(Show, '/show')
+    api.add_resource(Show, '/show', resource_class_kwargs={'model': model})
     app.run(port=port, host='0.0.0.0')
     
 
 def main():
     args = argparse.ArgumentParser()
     args.add_argument("--port", type=int, default=6000, help="Port to listen to incoming requests.")
+    args.add_argument("--model", type=str, default=FACE_DETECT_MODEL, help="Detection model.")
     
     config = args.parse_args()
-    start_server(config.port)
+    start_server(config.port, config.model)
     
 
 if __name__ == '__main__':
