@@ -48,23 +48,24 @@ class Show(Resource):
         img = cv2.imdecode(nparr, flags=1)
         
         results = self.model.run([img])[0]
-        faces = []
+        # faces = []
 
-        for i, box in enumerate(results['boxes']):
-            score = results['scores'][i]
-            class_id = results['class_ids'][i]
+        # for i, box in enumerate(results['boxes']):
+        #     score = results['scores'][i]
+        #     class_id = results['class_ids'][i]
+        #     label = results['labels'][i]
             
-            if score < 0.3:
-                continue
+        #     if score < 0.3:
+        #         continue
             
-            faces.append(box)
+        #     faces.append(box)
 
         #results = results[0]
         #pdb.set_trace()
 
         return Response(
             response=json.dumps({ 
-                "data": faces,
+                "data": results,
             }),
             status=200,
             mimetype='application/json'
@@ -78,7 +79,7 @@ def start_server(
     app = Flask(__name__)
     api = Api(app)
 
-    api.add_resource(Show, '/show', resource_class_kwargs={'model': model})
+    api.add_resource(Show, '/show', resource_class_kwargs={'model_path': model})
     app.run(port=port, host='0.0.0.0')
     
 
