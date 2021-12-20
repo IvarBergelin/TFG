@@ -16,12 +16,6 @@ import numpy as np
 import pandas as pd
 import pdb
 
-#haar_file = (cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-#face_cascade = cv2.CascadeClassifier(haar_file)
-
-#net = cv2.dnn.readNet('/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.bin','/home/ivar/TFG/models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
-#net.setPrefereableTarfet(cv2.dnn.DNN_TARGET_CPU)
-
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -33,6 +27,8 @@ class Show(Resource):
 
     def __init__(self) -> None:
         self.model = ModelIE('models/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml')
+        #self.model = ModelIE('models/intel/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml')
+        
 
 
     def get(self):
@@ -52,13 +48,6 @@ class Show(Resource):
         nparr = np.frombuffer(img, np.uint8)
         img = cv2.imdecode(nparr, flags=1)
         
-        #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #faces = face_cascade.detectMultiScale(gray)
-        
-        #blob = cv2.dnn.blobFromImage(img, size=(672,384),ddepth=cv2.CV_8U)
-        #net.setInput(blob)
-        #faces = net.forward()
-
         results = self.model.run([img])[0]
         faces = []
 
