@@ -4,20 +4,27 @@
 
 FROM python:3.7-slim as build
 
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y -q --no-install-recommends protobuf-compiler && \
+    apt-get install -y -q --no-install-recommends protobuf-compiler libgl1-mesa-dev libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/*
+    #sudo apt-get install -y 
 
 RUN pip install --upgrade pip grpcio-tools protobuf numpy opencv-python-headless pandas pillow imutils flask flask_restful response
+#RUN git clone https://github.com/HiEST/cova-tuner.git
+#RUN cd cova-tuner 
+ADD /cova-tuner /cova-tuner
+WORKDIR "/cova-tuner"
+RUN pip install -e .
 
 FROM python:3.7-slim
-
 COPY --from=build /usr/local/lib/python3.7/site-packages /usr/local/lib/python3.7/site-packages
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y -q --no-install-recommends libgl1-mesa-dev libglib2.0-0 && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip install openvino
+
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    #apt-get install -y -q --no-install-recommends libgl1-mesa-dev libglib2.0-0 && \
+    #rm -rf /var/lib/apt/lists/* && \
+    
 
 #ENV DEBIAN_FRONTEND=noninteractive
 #RUN apt-get update
@@ -33,9 +40,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 #    response\
 #    openvino-python
 
-ADD server_example.py .
+ADD server_example_oV.py .
 
-ENTRYPOINT ["python3", "./server_example.py"]
+ENTRYPOINT ["python", "./server_example_oV.py"]
 
 # RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 #     apt-get install -y -q --no-install-recommends python3-opencv && \
