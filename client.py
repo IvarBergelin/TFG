@@ -76,7 +76,7 @@ def main():
             else:
                 next_frame = args.skip
 
-        frame = cv2.resize(frame, (1280, 720))
+        #frame = cv2.resize(frame, (1280, 720))
         # frame_bgr = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2RGB)
 
         if not ret:

@@ -24,7 +24,7 @@ RUN apt install libgl1-mesa-glx libsm6 ffmpeg -y
 COPY /models /models
 COPY /cova-tuner /cova-tuner
 #ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /.
+
 ADD server.py .
 
 ENTRYPOINT ["python", "./server.py"]
